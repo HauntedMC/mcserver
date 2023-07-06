@@ -1,5 +1,6 @@
 cd data
 
-curl -L -o server.jar ${JAR_URL}
+bash ../download_jar.sh
 
+echo "Starting Server.."
 exec java ${JVM_MEMORY_OPTIONS} ${JAVA_ARGS} -jar server.jar --nogui

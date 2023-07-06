@@ -11,7 +11,7 @@ ENV SERVER_PORT=25565 \
 RUN mkdir /data
 
 # Copy scripts
-COPY ./start_server.sh .
+COPY ./scripts/ .
 
 # Set the JVM memory options
 ENV JVM_MEMORY_OPTIONS="-Xms${JVM_MEMORY} -Xmx${JVM_MEMORY}"
