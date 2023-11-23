@@ -19,7 +19,4 @@ ENV JVM_MEMORY_OPTIONS="-Xms${JVM_MEMORY} -Xmx${JVM_MEMORY}"
 # Start the server
 CMD ["sh", "./start_server.sh"]
 
-# Expose the server port
-EXPOSE ${SERVER_PORT}
-
 VOLUME /data
