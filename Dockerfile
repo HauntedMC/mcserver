@@ -12,9 +12,6 @@ RUN mkdir /data
 # Copy scripts
 COPY ./scripts/ .
 
-# Set the JVM memory options
-ENV JVM_MEMORY_OPTIONS="-Xms${JVM_MEMORY} -Xmx${JVM_MEMORY}"
-
 # Start the server
 CMD ["sh", "./start_server.sh"]
 

@@ -3,4 +3,4 @@ cd data
 bash ../download_jar.sh
 
 echo "Starting Server.."
-exec java ${JVM_MEMORY_OPTIONS} ${JAVA_ARGS} -jar server.jar --nogui
+exec java -Xms${JVM_MEMORY} -Xmx${JVM_MEMORY} ${JAVA_ARGS} -jar server.jar --nogui
