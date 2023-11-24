@@ -2,8 +2,7 @@
 FROM openjdk:17-oracle
 
 # Set environment variables
-ENV SERVER_PORT=25565 \
-    JAVA_ARGS="" \
+ENV JAVA_ARGS="" \
     JVM_MEMORY=1G \
     JAR_URL="https://hauntedmc.nl/server.jar"
 

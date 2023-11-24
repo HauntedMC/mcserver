@@ -33,7 +33,7 @@ JAR_URL="https://hauntedmc.nl/server.jar"
 SERVER_PORT="SERVER_PORT_HERE"
 
 docker rm $NAME
-docker run --name $NAME --network bridge -d -p $SERVER_PORT:$SERVER_PORT -e SERVER_PORT=$SERVER_PORT -e JVM_MEMORY=$MEM -e JAVA_ARGS="$ARGS" -e JAR_URL=$JAR_URL -v $MOUNT -it $IMAGE
+docker run --name $NAME --network bridge -d -p $SERVER_PORT:$SERVER_PORT -e JVM_MEMORY=$MEM -e JAVA_ARGS="$ARGS" -e JAR_URL=$JAR_URL -v $MOUNT -it $IMAGE
 ```
 
 ### Attach Minecraft Console
