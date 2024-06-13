@@ -1,5 +1,5 @@
 # Base image with Java 17 installed
-FROM openjdk:17-oracle
+FROM openjdk:21-oracle
 
 # Set environment variables
 ENV JAVA_ARGS="" \
