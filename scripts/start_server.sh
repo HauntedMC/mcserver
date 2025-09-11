@@ -1,5 +1,3 @@
-cd data
-
 bash ../download_jar.sh
 
 echo "Starting Server.."
