@@ -1,6 +1,5 @@
 # Base image with Java 21
 FROM eclipse-temurin:21-jre
-# (You can keep openjdk:21-oracle if you prefer. Commands below still work.)
 
 ARG UID=10001
 ARG GID=10001
