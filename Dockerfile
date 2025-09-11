@@ -8,27 +8,26 @@ ARG GID=10001
 RUN groupadd -g ${GID} mc \
  && useradd -m -u ${UID} -g ${GID} -r -s /usr/sbin/nologin mc
 
-# Tools your start script likely needs to download the JAR
-RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates \
- && rm -rf /var/lib/apt/lists/*
 
 # Create dirs and set ownership
 RUN mkdir -p /data /app && chown -R mc:mc /data /app
 
 # Copy scripts with correct ownership + execute bit
 COPY --chown=mc:mc ./scripts/ /app/
-RUN chmod +x /app/start_server.sh
+RUN chmod +x /app/start_server.sh \
+    # satisfy start_server.sh's '../download_jar.sh' by making /download_jar.sh resolve
+    && [ -f /app/download_jar.sh ] && ln -s /app/download_jar.sh /download_jar.sh || true
 
 # Environment
 ENV JAVA_ARGS="" \
     JVM_MEMORY=2G \
-    JAR_URL="https://hauntedmc.nl/server.jar"
+    JAR_URL="https://hauntedmc.nl/server.jar" \
+    UMASK=0002
 
-WORKDIR /app
+WORKDIR /data
 VOLUME ["/data"]
 
-# Drop root
 USER mc
 
-# Start the server
-CMD ["sh", "/app/start_server.sh"]
+CMD ["sh","-lc","umask ${UMASK} && exec /app/start_server.sh"]
+
