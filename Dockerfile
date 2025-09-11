@@ -14,9 +14,7 @@ RUN mkdir -p /data /app && chown -R mc:mc /data /app
 
 # Copy scripts with correct ownership + execute bit
 COPY --chown=mc:mc ./scripts/ /app/
-RUN chmod +x /app/start_server.sh \
-    # satisfy start_server.sh's '../download_jar.sh' by making /download_jar.sh resolve
-    && [ -f /app/download_jar.sh ] && ln -s /app/download_jar.sh /download_jar.sh || true
+RUN chmod +x /app/start_server.sh /app/download_jar.sh
 
 # Environment
 ENV JAVA_ARGS="" \
