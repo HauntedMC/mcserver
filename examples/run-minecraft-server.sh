@@ -74,6 +74,13 @@ ensure_data_dir_permissions() {
   fi
 }
 
+is_true() {
+  case "${1,,}" in
+    true|yes|1|on) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 # ============================== CONFIG =======================================
 
 # Container user/group IDs (must match image build args).
@@ -108,6 +115,8 @@ JAR_SHA256=""
 JAR_DOWNLOAD_MODE="always"
 
 # Port publishing for Java edition.
+# Set ENABLE_JAVA_PORT=false to keep the server internal-only on Docker network.
+ENABLE_JAVA_PORT="true"
 BIND_IP="0.0.0.0"
 JAVA_PORT="25565"
 
@@ -122,6 +131,19 @@ ensure_data_dir_permissions "${DATA_DIR}" "${CONTAINER_UID}" "${CONTAINER_GID}"
 
 docker rm -f "${CONTAINER_NAME}" 2>/dev/null || true
 
+port_args=()
+if is_true "${ENABLE_JAVA_PORT}"; then
+  if [[ -z "${BIND_IP}" || -z "${JAVA_PORT}" ]]; then
+    fail "BIND_IP and JAVA_PORT must be set when ENABLE_JAVA_PORT=true."
+  fi
+  port_args=(
+    -p "${BIND_IP}:${JAVA_PORT}:${JAVA_PORT}/tcp"
+    -p "${BIND_IP}:${JAVA_PORT}:${JAVA_PORT}/udp"
+  )
+else
+  log INFO "Java ports are not published (internal-only container networking)."
+fi
+
 # docker run flags reference:
 # - --network: joins a pre-created docker network
 # - --restart unless-stopped: survives daemon/host restarts
@@ -135,8 +157,7 @@ docker run --name "${CONTAINER_NAME}" \
   --network "${NETWORK}" \
   --restart unless-stopped \
   -d \
-  -p "${BIND_IP}:${JAVA_PORT}:${JAVA_PORT}/tcp" \
-  -p "${BIND_IP}:${JAVA_PORT}:${JAVA_PORT}/udp" \
+  "${port_args[@]}" \
   -e TZ="${TIMEZONE}" \
   -e JVM_MEMORY="${MEMORY}" \
   -e JAVA_ARGS="${JAVA_ARGS}" \

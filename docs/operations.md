@@ -44,6 +44,14 @@ tar -czf "minecraft-backup-$(date +%F).tar.gz" ./data
 
 For active servers, prefer plugin-assisted backups or stop the server first for strict consistency.
 
+## Internal-only networking
+
+If you do not want host exposure and only want service-to-service traffic on Docker network:
+
+- In `examples/run-minecraft-server.sh`, set `ENABLE_JAVA_PORT="false"`.
+- In `examples/run-proxy-server.sh`, set `ENABLE_JAVA_PORT="false"` (and keep Bedrock/Votifier disabled).
+- For manual `docker run`, omit all `-p` flags.
+
 ## Troubleshooting startup failures
 
 1. Confirm `JAR_URL` is reachable from the deployment host.

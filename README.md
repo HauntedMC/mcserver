@@ -34,6 +34,7 @@ chmod +x ./run-mcserver.sh
 ```
 
 For proxy deployments (for example Velocity), use [`examples/run-proxy-server.sh`](./examples/run-proxy-server.sh).
+For internal-only Docker network deployments, set `ENABLE_JAVA_PORT="false"` in either example script.
 
 ### Minimal manual run
 
@@ -49,6 +50,8 @@ docker run \
   -v "$PWD/data:/data" \
   ghcr.io/hauntedmc/mcserver:latest
 ```
+
+To keep the server internal-only on Docker network, omit the `-p` flags.
 
 ## Documentation
 

@@ -92,3 +92,11 @@ Run it with:
 ```bash
 ./scripts/validate.sh --require-shellcheck
 ```
+
+## Example runner exposure controls
+
+Both example run scripts support internal-only deployments:
+
+- `ENABLE_JAVA_PORT="true|false"` controls Java port publishing.
+- `BIND_IP` and port variables are only required when publishing is enabled.
+- In proxy mode, Bedrock and Votifier remain independently opt-in.

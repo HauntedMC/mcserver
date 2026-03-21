@@ -117,7 +117,9 @@ JAR_SHA256=""
 JAR_DOWNLOAD_MODE="always"
 
 # Port publishing.
-# Java is always published (TCP + UDP). Bedrock/Votifier are opt-in.
+# Set ENABLE_JAVA_PORT=false for internal-only proxy networking.
+# Bedrock and Votifier publishing remain opt-in.
+ENABLE_JAVA_PORT="true"
 BIND_IP="0.0.0.0"
 JAVA_PORT="25565"
 ENABLE_BEDROCK="false"
@@ -136,12 +138,23 @@ ensure_data_dir_permissions "${DATA_DIR}" "${CONTAINER_UID}" "${CONTAINER_GID}"
 
 docker rm -f "${CONTAINER_NAME}" 2>/dev/null || true
 
-port_args=(
-  -p "${BIND_IP}:${JAVA_PORT}:${JAVA_PORT}/tcp"
-  -p "${BIND_IP}:${JAVA_PORT}:${JAVA_PORT}/udp"
-)
+port_args=()
+if is_true "${ENABLE_JAVA_PORT}"; then
+  if [[ -z "${BIND_IP}" || -z "${JAVA_PORT}" ]]; then
+    fail "BIND_IP and JAVA_PORT must be set when ENABLE_JAVA_PORT=true."
+  fi
+  port_args+=(
+    -p "${BIND_IP}:${JAVA_PORT}:${JAVA_PORT}/tcp"
+    -p "${BIND_IP}:${JAVA_PORT}:${JAVA_PORT}/udp"
+  )
+else
+  log INFO "Java ports are not published (internal-only container networking)."
+fi
 
 if is_true "${ENABLE_BEDROCK}"; then
+  if [[ -z "${BIND_IP}" || -z "${BEDROCK_PORT}" ]]; then
+    fail "BIND_IP and BEDROCK_PORT must be set when ENABLE_BEDROCK=true."
+  fi
   port_args+=(
     -p "${BIND_IP}:${BEDROCK_PORT}:${BEDROCK_PORT}/tcp"
     -p "${BIND_IP}:${BEDROCK_PORT}:${BEDROCK_PORT}/udp"
@@ -149,6 +162,9 @@ if is_true "${ENABLE_BEDROCK}"; then
 fi
 
 if is_true "${ENABLE_VOTIFIER}"; then
+  if [[ -z "${BIND_IP}" || -z "${VOTIFIER_PORT}" ]]; then
+    fail "BIND_IP and VOTIFIER_PORT must be set when ENABLE_VOTIFIER=true."
+  fi
   port_args+=(-p "${BIND_IP}:${VOTIFIER_PORT}:${VOTIFIER_PORT}/tcp")
 fi
 
@@ -160,7 +176,7 @@ fi
 # docker run flags reference:
 # - --network/--ip: joins the configured network; static IP is optional
 # - --restart unless-stopped + -d: resilient background service behavior
-# - port_args: Java is always published; Bedrock/Votifier only if enabled
+# - port_args: Java/Bedrock/Votifier are published only when enabled
 # - -e TZ/JVM_MEMORY/JAVA_ARGS/JAR_URL: runtime configuration for the image
 # - -v DATA_DIR:/data: persistent proxy files (configs, plugins, logs, jar)
 # - --read-only + --tmpfs /tmp: immutable root filesystem with writable /tmp
