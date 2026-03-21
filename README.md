@@ -1,7 +1,7 @@
 # mcserver
 
 [![CI](https://github.com/hauntedmc/mcserver/actions/workflows/ci.yml/badge.svg)](https://github.com/hauntedmc/mcserver/actions/workflows/ci.yml)
-[![Release](https://github.com/hauntedmc/mcserver/actions/workflows/release.yml/badge.svg)](https://github.com/hauntedmc/mcserver/actions/workflows/release.yml)
+[![Publish](https://github.com/hauntedmc/mcserver/actions/workflows/release.yml/badge.svg)](https://github.com/hauntedmc/mcserver/actions/workflows/release.yml)
 [![License: AGPL v3](https://img.shields.io/badge/license-AGPL%20v3-blue.svg)](./LICENSE)
 [![Issues](https://img.shields.io/github/issues/hauntedmc/mcserver)](https://github.com/hauntedmc/mcserver/issues)
 [![Pull Requests](https://img.shields.io/github/issues-pr/hauntedmc/mcserver)](https://github.com/hauntedmc/mcserver/pulls)
@@ -23,12 +23,14 @@ This repository packages a small, auditable container image for Minecraft server
 - Downloads or refreshes `server.jar` on startup from `JAR_URL`.
 - Stores server state under a mounted `/data` volume.
 - Exposes straightforward JVM tuning through environment variables.
-- Publishes multi-arch images to GitHub Container Registry.
+- Publishes multi-arch images publicly to GitHub Container Registry.
 - Ships with CI, contribution guidance, issue templates, and release automation.
 
 ## Quick start
 
 ### Pull the published image
+
+Pushing a version tag such as `v1.2.3` publishes `ghcr.io/hauntedmc/mcserver:latest`, `ghcr.io/hauntedmc/mcserver:v1.2.3`, `ghcr.io/hauntedmc/mcserver:1.2.3`, and a `sha-<commit>` tag for that release commit.
 
 ```bash
 docker pull ghcr.io/hauntedmc/mcserver:latest
@@ -106,9 +108,9 @@ ctr -n=k8s.io i import mcserver.tar
 ## Release process
 
 1. Update changes on the default branch.
-2. Run `./update_version.sh <major|minor|patch>`.
-3. Push the branch and the new tag.
-4. GitHub Actions will build and publish a multi-architecture image and create a GitHub release for that tag.
+2. Run `./update_version.sh <major|minor|patch>` to bump `version.txt`, create the release commit, and create the local Git tag.
+3. Push the branch and the new tag using the command printed by the script.
+4. GitHub Actions will publish the public GHCR image tags for that release and create a GitHub release.
 
 ## Open source and community
 
