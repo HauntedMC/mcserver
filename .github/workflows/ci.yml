@@ -28,7 +28,8 @@ jobs:
           sh -n scripts/start_server.sh
           bash -n build.sh
           bash -n update_version.sh
-          bash -n examples/run-container.sh
+          bash -n examples/run-minecraft-server.sh
+          bash -n examples/run-proxy-server.sh
 
       - name: Build Docker image
         run: docker build --pull --build-arg UID=10001 --build-arg GID=10001 -t mcserver:test .

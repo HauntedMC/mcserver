@@ -36,12 +36,12 @@ Pushing a version tag such as `v1.2.3` publishes `ghcr.io/hauntedmc/mcserver:lat
 docker pull ghcr.io/hauntedmc/mcserver:latest
 ```
 
-### Recommended: use the example run script
+### Recommended: use the example run scripts
 
-The recommended way to start the image is with [`examples/run-container.sh`](./examples/run-container.sh), which sets up the data directory permissions and runs the container with the hardened flags from your original deployment script.
+Use [`examples/run-minecraft-server.sh`](./examples/run-minecraft-server.sh) for a Minecraft Java server and [`examples/run-proxy-server.sh`](./examples/run-proxy-server.sh) for proxy deployments (for example Velocity). Both scripts set up data directory permissions, run containers with hardened runtime flags, and include Aikar's recommended JVM flags by default. In the proxy example, Bedrock and Votifier publication are optional (disabled by default), and `CONTAINER_IP` is intentionally empty unless you want to pin a static proxy IP.
 
 ```bash
-cp examples/run-container.sh ./run-mcserver.sh
+cp examples/run-minecraft-server.sh ./run-mcserver.sh
 chmod +x ./run-mcserver.sh
 # edit ./run-mcserver.sh for your network, JAR_URL, memory, and timezone
 ./run-mcserver.sh
@@ -79,7 +79,7 @@ docker stop minecraft-server
 | --- | --- | --- |
 | `JVM_MEMORY` | `2G` | Sets both `-Xms` and `-Xmx`. |
 | `JAVA_ARGS` | `""` | Additional JVM arguments appended to the Java command. |
-| `JAR_URL` | `https://hauntedmc.nl/server.jar` | URL used by the startup helper to fetch `server.jar`. |
+| `JAR_URL` | `https://example.com/path/to/server.jar` | URL used by the startup helper to fetch `server.jar`. |
 | `UMASK` | `0002` | File creation mask applied before startup. |
 
 ## Operating notes
@@ -87,7 +87,7 @@ docker stop minecraft-server
 - The deployment environment must be able to reach the configured `JAR_URL`.
 - The startup sequence always refreshes `/data/server.jar` before launching Java.
 - `/data` should be mounted from persistent storage for worlds, logs, configs, and downloaded artifacts.
-- The example run script expects permission to `chown` the host data directory to UID/GID `10001`; adjust those values if your environment requires different ownership.
+- The example run scripts expect permission to `chown` the host data directory to UID/GID `10001`; adjust those values if your environment requires different ownership.
 - The image does not bundle a server JAR, so you remain responsible for distributing any proprietary upstream binaries in a compliant way.
 
 ## Local development

@@ -2,11 +2,12 @@ FROM eclipse-temurin:21-jre
 
 ARG UID=10001
 ARG GID=10001
+ARG SOURCE_URL="https://github.com/your-org/mcserver"
 
 LABEL org.opencontainers.image.title="mcserver" \
       org.opencontainers.image.description="Production-oriented non-root Minecraft server image that downloads the server JAR at startup." \
       org.opencontainers.image.licenses="AGPL-3.0-or-later" \
-      org.opencontainers.image.source="https://github.com/hauntedmc/mcserver"
+      org.opencontainers.image.source="${SOURCE_URL}"
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends ca-certificates curl \
@@ -21,7 +22,7 @@ RUN chmod +x /app/start_server.sh /app/download_jar.sh
 
 ENV JAVA_ARGS="" \
     JVM_MEMORY=2G \
-    JAR_URL="https://hauntedmc.nl/server.jar" \
+    JAR_URL="https://example.com/path/to/server.jar" \
     UMASK=0002
 
 WORKDIR /data
