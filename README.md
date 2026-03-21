@@ -116,8 +116,6 @@ ctr -n=k8s.io i import mcserver.tar
 - Contributing guide: [CONTRIBUTING.md](./CONTRIBUTING.md).
 - Security policy: [SECURITY.md](./SECURITY.md).
 - Code of conduct: [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md).
-- Issue templates: [`.github/ISSUE_TEMPLATE/`](./.github/ISSUE_TEMPLATE/).
-- Pull request template: [`.github/pull_request_template.md`](./.github/pull_request_template.md).
 
 ## License
 
