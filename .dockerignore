@@ -1,2 +1,6 @@
 .git
 .github
+.idea
+data
+docs
+examples

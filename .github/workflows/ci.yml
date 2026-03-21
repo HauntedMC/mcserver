@@ -16,20 +16,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Lint shell scripts
-        uses: ludeeus/action-shellcheck@2.0.0
-        with:
-          scandir: '.'
-          severity: warning
-
-      - name: Validate shell syntax
+      - name: Install shellcheck
         run: |
-          sh -n scripts/download_jar.sh
-          sh -n scripts/start_server.sh
-          bash -n build.sh
-          bash -n update_version.sh
-          bash -n examples/run-minecraft-server.sh
-          bash -n examples/run-proxy-server.sh
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
 
-      - name: Build Docker image
-        run: docker build --pull --build-arg UID=10001 --build-arg GID=10001 -t mcserver:test .
+      - name: Validate scripts and Docker build
+        run: ./scripts/validate.sh --require-shellcheck --with-docker-build

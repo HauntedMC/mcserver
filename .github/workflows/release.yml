@@ -19,6 +19,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: Validate scripts
+        run: ./scripts/validate.sh --require-shellcheck
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
         with:

@@ -20,13 +20,15 @@ Thanks for helping improve `mcserver`.
 ### Useful commands
 
 ```bash
-./build.sh
+./scripts/validate.sh --with-docker-build
+./build.sh --tag mcserver:local
 ```
 
 ## Pull request expectations
 
 - Keep changes scoped and reviewable.
 - Update documentation when behavior changes.
+- Prefer extending existing docs under `docs/` rather than adding ad-hoc notes.
 - Add or update workflows/templates/docs when repository process changes.
 - Confirm shell scripts remain POSIX-compatible where applicable.
 
