@@ -1,0 +1,39 @@
+name: Bug report
+description: Report a reproducible problem with the image, scripts, or workflows.
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the issue and what you expected instead.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or tag
+      description: Which image tag, commit, or release is affected?
+      placeholder: v1.8.4
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Provide exact steps, commands, and environment details.
+      placeholder: |
+        1. Pull image ...
+        2. Run container ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs or screenshots
+      description: Paste logs or screenshots if they help explain the problem.
+      render: shell

@@ -1,97 +1,124 @@
-# mcserver image repo
+# mcserver
 
-## Installation
+[![CI](https://github.com/hauntedmc/mcserver/actions/workflows/ci.yml/badge.svg)](https://github.com/hauntedmc/mcserver/actions/workflows/ci.yml)
+[![Release](https://github.com/hauntedmc/mcserver/actions/workflows/release.yml/badge.svg)](https://github.com/hauntedmc/mcserver/actions/workflows/release.yml)
+[![License: AGPL v3](https://img.shields.io/badge/license-AGPL%20v3-blue.svg)](./LICENSE)
+[![Issues](https://img.shields.io/github/issues/hauntedmc/mcserver)](https://github.com/hauntedmc/mcserver/issues)
+[![Pull Requests](https://img.shields.io/github/issues-pr/hauntedmc/mcserver)](https://github.com/hauntedmc/mcserver/pulls)
 
-### Build Locally
-```bash
-./build.sh
-```
+A production-oriented Docker image for running a Minecraft Java server as a non-root user, with the server JAR fetched at container start from a configurable URL.
 
-### Get Access to GPR
-```bash
-docker login ghcr.io
-```
+## Why this repository exists
 
-### Pull Image
+This repository packages a small, auditable container image for Minecraft server deployments where:
+
+- the image itself can remain generic;
+- the server JAR is supplied from your own distribution endpoint at runtime;
+- persistent world data is stored under `/data`; and
+- the process runs without root privileges by default.
+
+## Features
+
+- Runs as a dedicated non-root user inside the container.
+- Downloads or refreshes `server.jar` on startup from `JAR_URL`.
+- Stores server state under a mounted `/data` volume.
+- Exposes straightforward JVM tuning through environment variables.
+- Publishes multi-arch images to GitHub Container Registry.
+- Ships with CI, contribution guidance, issue templates, and release automation.
+
+## Quick start
+
+### Pull the published image
+
 ```bash
 docker pull ghcr.io/hauntedmc/mcserver:latest
 ```
 
-## Usage
+### Recommended: use the example run script
 
-Note: 
-Deployment environment needs access to jar repository.
+The recommended way to start the image is with [`examples/run-container.sh`](./examples/run-container.sh), which sets up the data directory permissions and runs the container with the hardened flags from your original deployment script.
 
-### Run Image
 ```bash
-#!/usr/bin/env bash
-set -euo pipefail
+cp examples/run-container.sh ./run-mcserver.sh
+chmod +x ./run-mcserver.sh
+# edit ./run-mcserver.sh for your network, JAR_URL, memory, and timezone
+./run-mcserver.sh
+```
 
-# ---------- config ----------
-CONTAINER_UID=10001
-CONTAINER_GID=10001
-DATA_DIR="./data"
-NETWORK="your-docker-network"
+### Minimal manual start
 
-CONTAINER_NAME="minecraft-server"
-JAVA_ARGS="-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1"
-MEMORY="8G"
-IMAGE="ghcr.io/example/minecraft-server:latest"
-JAR_URL="https://example.com/path/to/server.jar"
-TIMEZONE="Europe/Amsterdam"
-
-# ---------- ensure perms on host ----------
-install -d -m 2775 -o "${CONTAINER_UID}" -g "${CONTAINER_GID}" "${DATA_DIR}"
-
-chown -R "${CONTAINER_UID}:${CONTAINER_GID}" "${DATA_DIR}"
-
-find "${DATA_DIR}" -type d -exec chmod 2775 {} +
-find "${DATA_DIR}" -type f -exec chmod g+w,o-rwx {} +
-
-if command -v setfacl >/dev/null 2>&1; then
-  setfacl -R -m g:${CONTAINER_GID}:rwx -m d:g:${CONTAINER_GID}:rwx "${DATA_DIR}" || true
-fi
-
-# ---------- run container ----------
-docker rm -f "${CONTAINER_NAME}" 2>/dev/null || true
-
-docker run --name "${CONTAINER_NAME}" \
-  --network "${NETWORK}" \
+```bash
+docker run \
+  --name minecraft-server \
   --restart unless-stopped \
   -d \
-  -e TZ="${TIMEZONE}" \
-  -e JVM_MEMORY="${MEMORY}" \
-  -e JAVA_ARGS="${JAVA_ARGS}" \
-  -e JAR_URL="${JAR_URL}" \
-  -v "${DATA_DIR}:/data" \
-  --read-only \
-  --tmpfs /tmp:rw,exec,size=128m \
-  --cap-drop ALL \
-  --security-opt no-new-privileges:true \
-  --pids-limit 1024 \
-  -it "${IMAGE}"
+  -e JVM_MEMORY=8G \
+  -e JAVA_ARGS='-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200' \
+  -e JAR_URL='https://example.com/path/to/server.jar' \
+  -v "$PWD/data:/data" \
+  ghcr.io/hauntedmc/mcserver:latest
 ```
 
-### Attach Minecraft Console
+### Attach to the Minecraft console
+
 ```bash
-docker attach CONTAINER_NAME_HERE
+docker attach minecraft-server
 ```
 
-### Stop Container
+### Stop the container
+
 ```bash
-docker stop CONTAINER_NAME_HERE
+docker stop minecraft-server
 ```
 
-## Development
+## Configuration
 
-### Build and Release
+| Variable | Default | Description |
+| --- | --- | --- |
+| `JVM_MEMORY` | `2G` | Sets both `-Xms` and `-Xmx`. |
+| `JAVA_ARGS` | `""` | Additional JVM arguments appended to the Java command. |
+| `JAR_URL` | `https://hauntedmc.nl/server.jar` | URL used by the startup helper to fetch `server.jar`. |
+| `UMASK` | `0002` | File creation mask applied before startup. |
+
+## Operating notes
+
+- The deployment environment must be able to reach the configured `JAR_URL`.
+- The startup sequence always refreshes `/data/server.jar` before launching Java.
+- `/data` should be mounted from persistent storage for worlds, logs, configs, and downloaded artifacts.
+- The example run script expects permission to `chown` the host data directory to UID/GID `10001`; adjust those values if your environment requires different ownership.
+- The image does not bundle a server JAR, so you remain responsible for distributing any proprietary upstream binaries in a compliant way.
+
+## Local development
+
+### Build locally
+
 ```bash
-./update_version.sh <major|minor|patch>
+./build.sh
 ```
 
-### Export local build to containerd (Kubernetes)
+### Export a local image into containerd
+
 ```bash
-docker save -o CONTAINER_NAME_HERE.tar CONTAINER_NAME_HERE
-ctr -n=k8s.io i import CONTAINER_NAME_HERE.tar
+docker save -o mcserver.tar mcserver:nonroot
+ctr -n=k8s.io i import mcserver.tar
 ```
 
+## Release process
+
+1. Update changes on the default branch.
+2. Run `./update_version.sh <major|minor|patch>`.
+3. Push the branch and the new tag.
+4. GitHub Actions will build and publish a multi-architecture image and create a GitHub release for that tag.
+
+## Open source and community
+
+- License: GNU Affero General Public License v3.0. See [LICENSE](./LICENSE).
+- Contributing guide: [CONTRIBUTING.md](./CONTRIBUTING.md).
+- Security policy: [SECURITY.md](./SECURITY.md).
+- Code of conduct: [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md).
+- Issue templates: [`.github/ISSUE_TEMPLATE/`](./.github/ISSUE_TEMPLATE/).
+- Pull request template: [`.github/pull_request_template.md`](./.github/pull_request_template.md).
+
+## License
+
+This project is licensed under the GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later). See [LICENSE](./LICENSE) for the full text.
