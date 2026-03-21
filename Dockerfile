@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:25-jre
 
 ARG UID=10001
 ARG GID=10001
