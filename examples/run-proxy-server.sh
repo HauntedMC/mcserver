@@ -108,6 +108,8 @@ JAR_URL="https://example.com/path/to/velocity.jar"
 MEMORY="2G"
 # Aikar recommended G1GC flags for Minecraft servers.
 JAVA_ARGS="-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1"
+# Velocity does not accept "--nogui", so disable it for proxy mode.
+MC_NOGUI="false"
 TIMEZONE="Europe/Amsterdam"
 
 # Optional integrity check for downloaded proxy jar.
@@ -192,6 +194,7 @@ docker run --name "${CONTAINER_NAME}" \
   -e TZ="${TIMEZONE}" \
   -e JVM_MEMORY="${MEMORY}" \
   -e JAVA_ARGS="${JAVA_ARGS}" \
+  -e MC_NOGUI="${MC_NOGUI}" \
   -e JAR_URL="${JAR_URL}" \
   -e JAR_SHA256="${JAR_SHA256}" \
   -e JAR_DOWNLOAD_MODE="${JAR_DOWNLOAD_MODE}" \

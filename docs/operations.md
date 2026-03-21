@@ -58,6 +58,7 @@ If you do not want host exposure and only want service-to-service traffic on Doc
 2. Check logs for download or checksum failures.
 3. Verify `/data` is writable by UID/GID used in the container (default `10001:10001`).
 4. Ensure `JVM_MEMORY` fits host capacity.
+5. For Velocity/proxy jars, set `MC_NOGUI=false` (Velocity rejects `--nogui`).
 
 ## Script validation
 

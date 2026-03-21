@@ -11,6 +11,8 @@ set -eu
 #
 # Optional env:
 # - JAVA_ARGS
+# - SERVER_ARGS
+# - MC_NOGUI
 # - UMASK
 # - EULA
 # - JAR_DOWNLOAD_MODE
@@ -44,4 +46,12 @@ fi
 _log INFO "Starting server."
 # shellcheck disable=SC2086
 # JAVA_ARGS is intentionally word-split by shell to support multiple flags.
-exec java -Xms"${JVM_MEMORY}" -Xmx"${JVM_MEMORY}" ${JAVA_ARGS:-} -jar server.jar --nogui
+if is_true "${MC_NOGUI:-true}"; then
+  # shellcheck disable=SC2086
+  # JAVA_ARGS/SERVER_ARGS are intentionally word-split to support multiple flags.
+  exec java -Xms"${JVM_MEMORY}" -Xmx"${JVM_MEMORY}" ${JAVA_ARGS:-} -jar server.jar ${SERVER_ARGS:-} --nogui
+else
+  # shellcheck disable=SC2086
+  # JAVA_ARGS/SERVER_ARGS are intentionally word-split to support multiple flags.
+  exec java -Xms"${JVM_MEMORY}" -Xmx"${JVM_MEMORY}" ${JAVA_ARGS:-} -jar server.jar ${SERVER_ARGS:-}
+fi

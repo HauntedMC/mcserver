@@ -14,6 +14,8 @@
 | Variable | Default | Description |
 | --- | --- | --- |
 | `JAVA_ARGS` | `""` | Extra JVM arguments appended to the java command. |
+| `SERVER_ARGS` | `""` | Extra arguments appended after `-jar server.jar`. |
+| `MC_NOGUI` | `true` | If `true`, appends `--nogui` when launching Java. Set `false` for Velocity. |
 | `UMASK` | `0002` | File creation mask applied before startup. |
 | `JAR_DOWNLOAD_MODE` | `always` | `always`, `if-missing`, or `if-url-changed`. |
 | `JAR_DOWNLOAD_TIMEOUT` | `300` | Download timeout in seconds when using `curl`. |

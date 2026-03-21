@@ -34,6 +34,7 @@ chmod +x ./run-mcserver.sh
 ```
 
 For proxy deployments (for example Velocity), use [`examples/run-proxy-server.sh`](./examples/run-proxy-server.sh).
+That script sets `MC_NOGUI=false` because Velocity does not accept the `--nogui` startup argument.
 For internal-only Docker network deployments, set `ENABLE_JAVA_PORT="false"` in either example script.
 
 ### Minimal manual run

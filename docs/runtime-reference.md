@@ -77,7 +77,7 @@ Container entrypoint. It enforces required env and starts Java.
 Inputs:
 
 - Required: `JVM_MEMORY`, `JAR_URL` (checked by download script)
-- Optional: `JAVA_ARGS`, `UMASK`, `EULA`, download-related vars
+- Optional: `JAVA_ARGS`, `SERVER_ARGS`, `MC_NOGUI`, `UMASK`, `EULA`, download-related vars
 
 ### `scripts/validate.sh`
 
