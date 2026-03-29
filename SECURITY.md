@@ -1,18 +1,35 @@
 # Security Policy
 
-## Reporting a vulnerability
+## Supported Versions
 
-Please do not file public GitHub issues for security-sensitive reports.
+Security fixes are prioritized for the latest stable release line.
+Older versions may receive fixes on a best-effort basis.
 
-Instead, report vulnerabilities privately using one of the following channels:
 
-- GitHub Security Advisories: https://github.com/hauntedmc/mcserver/security/advisories/new
-- Support form: https://hauntedmc.nl/support
-- Email: contact@remyduijsens.com
+## Reporting a Vulnerability
 
-When reporting, please include:
+Please do not open public issues for security vulnerabilities.
 
-- a description of the issue;
-- the affected version or tag;
-- reproduction steps or proof of concept, if available; and
-- any suggested remediation or mitigation.
+Use one of the following private channels:
+
+- GitHub Security Advisory: `Security` tab in this repository
+- HauntedMC support: https://www.hauntedmc.nl/support
+
+Include:
+
+- Affected version(s)
+- Reproduction steps / proof of concept
+- Impact assessment
+- Any proposed mitigation
+
+
+## What to Expect
+
+- We acknowledge reports as quickly as practical.
+- We validate impact, prioritize by severity, and prepare a fix.
+- We coordinate disclosure after a fix or mitigation is available.
+
+
+## Disclosure
+
+Please allow maintainers time to validate and patch before public disclosure.
