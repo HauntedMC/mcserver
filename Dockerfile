@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:25-jre
 
 # UID/GID are build-time overrides so operators can match host ownership models.
 ARG UID=10001

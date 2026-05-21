@@ -6,7 +6,7 @@ This document explains the runtime image design and the scripts used to start an
 
 `Dockerfile` intentionally keeps the image small and auditable:
 
-- Base image: `eclipse-temurin:21-jre`
+- Base image: `eclipse-temurin:25-jre`
 - Runtime tools: `ca-certificates` and `curl`
 - Runtime user: non-root `mc` user (`UID`/`GID` build args)
 - Mutable data path: `/data` (declared as `VOLUME`)
